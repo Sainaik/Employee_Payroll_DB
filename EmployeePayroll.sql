@@ -113,3 +113,99 @@ sp_help employee_payroll;
 
 insert employee_payroll
 values('Anitha', '2019-02-14', 'F', '9087654321' , 'Chennai', 'Sales', 4000000.00, 2000.00, 0.00, 3880000); 
+
+--UC 11 create an employee department and department table
+
+
+--creating Department table to store the dept id and dept name;
+create table DEPARTMENT
+(
+DeptId int primary key,
+DeptName varchar(100)
+);
+
+
+select * from DEPARTMENT;
+insert into DEPARTMENT VALUES(10,'IT');
+INSERT INTO DEPARTMENT VALUES(11,'HR');
+INSERT INTO DEPARTMENT VALUES(12,'Sales');
+
+
+--creating employee department table to store employee id,dept id
+create table Employee_department 
+(
+id int,
+DeptId int ,
+Primary key(id,DeptId)
+);
+
+insert into Employee_department values(1,10);
+insert into Employee_department values(2,10);
+insert into Employee_department values(3,11);
+insert into Employee_department values(4,12);
+
+
+select * from Employee_department;
+
+--sp_help Employee_payroll
+
+select * from Employee_payroll;
+
+delete from Employee_payroll where id=6;
+alter table Employee_payroll drop column department;
+
+select EP.name,EP.department from 
+Employee_payroll EP inner join Employee_department ED on EP.id=ED.id 
+ inner join DEPARTMENT D on D.DeptId=ED.DeptId ;
+
+select * from employee_payroll;
+
+--UC12 Ensure all the operations working fine
+
+select EP.name,EP.start,EP.gender,
+EP.address,EP.department from 
+Employee_payroll EP inner join Employee_department ED on EP.id=ED.id 
+ inner join DEPARTMENT D on ED.DeptId=D.DeptId where D.DeptName='IT';
+
+
+select EP.name,EP.start,EP.gender,
+EP.address,EP.department from 
+Employee_payroll EP inner join Employee_department ED on EP.id=ED.id 
+ inner join DEPARTMENT D on ED.DeptId=D.DeptId where D.DeptName='HR';
+
+
+--creating payments table to store the details about payments
+
+ create table Payments (
+ id int primary key,
+ basicPay DECIMAL(10,2) NOT NULL,
+ deductions decimal(10,2) not null default 0.0,
+ taxable_pay decimal(10,2) not null default 0.0,
+ tax decimal(10,2) not null default 0.0, 
+ net_pay decimal(10,2) not null default 0.0);
+
+insert into Payments
+values (1,400000.00, 2000.00, 0.00,0.00, 398000)
+
+insert into Payments
+values (2,300000.00, 1000.00, 0.00,0.00, 399000)
+
+insert into Payments
+values (3,500000.00, 3000.00, 0.00,0.00, 499700)
+
+insert into Payments
+values (4,100000.00, 00.00, 0.00,0.00, 100000)
+
+alter table Employee_payroll drop column basic_pay,address,deductions,income_tax,net_salary;
+
+select EP.gender,sum(P.net_pay)SumOfSalaries 
+from Employee_payroll EP inner join payments P on EP.id=P.id group by EP.gender ;
+
+select a.gender,avg(b.net_pay)AvgOfSalaries
+from Employee_payroll a inner join payments b on a.id=b.id group by a.gender;
+
+select a.gender,max(b.net_pay)MaxOfSalaries 
+from Employee_payroll a inner join payments b on a.id=b.id group by a.gender;
+
+select a.gender,min(b.net_pay)MinOfSalaries 
+from Employee_payroll a inner join payments b on a.id=b.id group by a.gender;
